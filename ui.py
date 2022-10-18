@@ -43,10 +43,14 @@ class QTreeViewWithContextMenu(QtWidgets.QTreeView):
         if user_action == delete_action:
             delete(folders, files)
         elif user_action == create_folder_action:
-            folder_name, ok = QtWidgets.QInputDialog().getText(self, 'Создать папку', 'Введите имя папки:',
-                                                               text='Новая папка')
-            path = folders[0]
-            create_folder(f'{path}/{folder_name}')
+            try:
+                folder_name, ok = QtWidgets.QInputDialog().getText(self, 'Создать папку', 'Введите имя папки:',
+                                                                   text='Новая папка')
+                path = folders[0]
+                create_folder(f'{path}/{folder_name}')
+            except Exception:
+                dialog = QtWidgets.QMessageBox()
+                dialog.critical(self, 'Ошибка!', 'Папка с заданным именем уже существует')
 
         elif user_action == copy_action:
             self.folders_to_copy = folders[:]
@@ -64,10 +68,16 @@ class QTreeViewWithContextMenu(QtWidgets.QTreeView):
             progress.setFixedSize(500, 200)
             progress.show()
             progress.setValue(size)
-            if self.cut_flag:
-                cut_paste(self.folders_to_copy, self.files_to_copy, folders[0])
-            else:
-                copy_paste(self.folders_to_copy, self.files_to_copy, folders[0])
+            try:
+                if self.cut_flag:
+                    cut_paste(self.folders_to_copy, self.files_to_copy, folders[0])
+                else:
+                    copy_paste(self.folders_to_copy, self.files_to_copy, folders[0])
+            except Exception:
+                if self.cut_flag:
+                    cut_paste(self.folders_to_copy, self.files_to_copy, folders[0]+'(1)')
+                else:
+                    copy_paste(self.folders_to_copy, self.files_to_copy, folders[0]+'(1)')
             self.folders_to_copy = []
             self.files_to_copy = []
         elif user_action == rename_action:
