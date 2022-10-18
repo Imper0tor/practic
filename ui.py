@@ -88,7 +88,7 @@ class QTreeViewWithContextMenu(QtWidgets.QTreeView):
             new_name, ok = QtWidgets.QInputDialog().getText(self, 'Переименовать', 'Введите новое имя:',
                                                             text=index[index.rindex('/') + 1:])
             if ok:
-                rename(index, index[:index.rindex('/')] + new_name)
+                rename(index, index[:index.rindex('/')+1] + new_name)
         self.model().refresh()
 
     def selectedFoldersAndFiles(self):
